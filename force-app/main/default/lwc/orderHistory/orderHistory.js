@@ -70,8 +70,6 @@ export default class OrderHistory extends LightningElement {
                 message: error.message,
                 variant: 'error',
             }));
-        }finally{
-            refreshApex(this.wiredResult);
         }
        
     }
@@ -191,14 +189,14 @@ export default class OrderHistory extends LightningElement {
         this.showCart = this.cartItems.length > 0;
     }
 
-    handlePlaceOrder() {
+   async handlePlaceOrder() {
         this.cartItems = [];
         this.showProductTable = false;
         this.showCart = false;
         this.showSummary = false;
         this.showInvoiceSection = false;
         this.showPurchaseOrderSection = true;
-        this.loadPreviousOrders(); 
+        await this.loadPreviousOrders(); 
     }
 
     handleCheckout() {
