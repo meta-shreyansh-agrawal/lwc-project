@@ -5,12 +5,16 @@ import { refreshApex } from '@salesforce/apex';
 
 export default class OrderHistory extends LightningElement {
 
+
+
+
     previousOrders = [];
     @track cartItems = [];
     showProductTable = false;
     showCart = false;
     showSummary = false;
     wiredResult;
+    arr = [];
     orderColumns = [
         // {label: 'Id', fieldName: 'Id'},
         { label: 'Order Number', fieldName: 'Name' },
@@ -20,9 +24,12 @@ export default class OrderHistory extends LightningElement {
 
     ]
 
+
     connectedCallback() {
         this.loadPreviousOrders();
     }
+
+   
 
     totalRecords = 0;
     totalPages = 0;
@@ -33,6 +40,7 @@ export default class OrderHistory extends LightningElement {
     showPurchaseOrderSection = true;
     showCartSection = false;
     showInvoiceSection = false;
+
 
     async loadPreviousOrders() {
 
@@ -79,6 +87,8 @@ export default class OrderHistory extends LightningElement {
         return this.currentPage === this.totalPages;
     }
 
+
+
     handleStartOrder() {
         this.showProductTable = true;
         this.showProductSection = true;
@@ -86,7 +96,6 @@ export default class OrderHistory extends LightningElement {
     }
 
     handleAddToCart(event) {
-        console.log('Product added to the cart', JSON.stringify(event.detail));
         const productList = event.detail.productIds;
         
         for(const product of productList) {
@@ -105,28 +114,49 @@ export default class OrderHistory extends LightningElement {
                 this.cartItems.push({ ...product, Quantity__c: 1 });
             }
         }   
+        
         this.cartItems = [...this.cartItems];
+
+
         if (this.cartItems.length > 0) {
 
             this.showCart = true;
             this.showCartSection = true;
         }
+
         console.log('Cart Items ', JSON.stringify(this.cartItems));
 
     }
+
+
+
 
     handleUpdateCart(event) {
         const updatedCartItems = [...event.detail];
         const oldCartItems = [...this.cartItems];
         console.log(JSON.stringify("old " + JSON.stringify(oldCartItems)));
         console.log(JSON.stringify("new " + JSON.stringify(updatedCartItems)));
+        
+        //arr = [oldCartItems, updatedCartItems];
 
         // Sync back to product table via custom event
         const productTable = this.template.querySelector('c-product-comp');
-        const arr = [oldCartItems, updatedCartItems];
-        this.dispatchEvent(new CustomEvent('productupdate', {detail: arr}));
+        
+        if(productTable) {
+            // productTable.dispatchEvent(new CustomEvent('productupdate', {detail: arr}));
+            const arr = [oldCartItems, updatedCartItems];
+            productTable.updateAvailableUnits(arr);
+        }
+        
+
+        //this.dispatchEvent(new CustomEvent('productupdate', {detail: arr}));
+       
+
         this.cartItems = updatedCartItems;
     }
+
+  
+
 
     handleRemoveFromCart(event) {
         const updatedCart = [...event.detail];
@@ -135,7 +165,11 @@ export default class OrderHistory extends LightningElement {
         const removedProducts = this.cartItems.filter(
             item => !updatedCart.some(u => u.Id === item.Id)
         );
+
         this.dispatchEvent(new CustomEvent('removeproduct', {detail: removedProducts}));
+
+ 
+
         this.cartItems = updatedCart;
         this.showCart = this.cartItems.length > 0;
     }
@@ -165,4 +199,14 @@ export default class OrderHistory extends LightningElement {
         
         });
     }
+
+
+
+
+
+  
+
+
+
+
 }

@@ -20,7 +20,7 @@
     
             <lightning-button label="Add New Purchase Order"
                               onclick={handleStartOrder}
-                              class="slds-m-top_medium slds-m-left_x-small">
+                              class="slds-m-top_medium">
             </lightning-button>
     
         </lightning-card>
@@ -30,12 +30,9 @@
 
 
     <template if:true={showProductSection}>
-
         <lightning-card title="Products" icon-name="standard:product_consumed">
-            <template if:true={showProductTable}>
-                <c-product-comp onaddtocart={handleAddToCart}></c-product-comp>
-            </template>
-
+            <c-product-comp onaddtocart={handleAddToCart}
+                            ></c-product-comp>
         </lightning-card>
     </template>
 
@@ -52,7 +49,7 @@
             <template if:true={showCart}>
                  <!--  Checkout Button -->
                 <lightning-button
-                    class="slds-m-top_medium slds-m-left_x-small"
+                    class="slds-m-top_medium"
                     label="Checkout"
                     onclick={handleCheckout}
                     variant="brand">
