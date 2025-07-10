@@ -6,7 +6,9 @@ import { refreshApex } from '@salesforce/apex';
 export default class OrderHistory extends LightningElement {
 
 
-
+    @track sortBy; 
+    @track sortDirection;
+    // @track sortedData; 
 
     previousOrders = [];
     @track cartItems = [];
@@ -17,10 +19,10 @@ export default class OrderHistory extends LightningElement {
     arr = [];
     orderColumns = [
         // {label: 'Id', fieldName: 'Id'},
-        { label: 'Order Number', fieldName: 'Name' },
-        { label: 'Status', fieldName: 'Status__c' },
-        { label: 'Total Amount', fieldName: 'TotalAmount__c', type: 'currency' },
-        { label: 'Order Date', fieldName: 'OrderDate__c', type: 'date' },
+        { label: 'Order Number', fieldName: 'Name',sortable: true },
+        { label: 'Status', fieldName: 'Status__c', sortable: true },
+        { label: 'Total Amount', fieldName: 'TotalAmount__c', type: 'currency',sortable: true },
+        { label: 'Order Date', fieldName: 'OrderDate__c', type: 'date',sortable: true },    
 
     ]
 
@@ -28,8 +30,6 @@ export default class OrderHistory extends LightningElement {
     connectedCallback() {
         this.loadPreviousOrders();
     }
-
-   
 
     totalRecords = 0;
     totalPages = 0;
@@ -41,6 +41,19 @@ export default class OrderHistory extends LightningElement {
     showCartSection = false;
     showInvoiceSection = false;
 
+
+    handleSort(event){
+        const {fieldName: sortedBy, sortDirection} = event.detail;
+        const cloneData = [...this.previousOrders];
+        cloneData.sort((a,b)=>{
+            let valA = a[sortedBy] || ''; 
+            let valB = b[sortedBy] || ''; 
+            return sortDirection === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        })
+        this.previousOrders = cloneData; 
+        this.sortBy = sortedBy; 
+        this.sortDirection = sortDirection;
+    }
 
     async loadPreviousOrders() {
 

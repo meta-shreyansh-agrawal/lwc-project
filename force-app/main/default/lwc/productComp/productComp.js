@@ -1,4 +1,4 @@
-import { LightningElement, wire, api } from 'lwc';
+import { LightningElement, wire, api, track } from 'lwc';
 import getPaginatedProducts from '@salesforce/apex/productList.getPaginatedProducts';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import searchProducts from '@salesforce/apex/productSearch.searchProducts';
@@ -11,13 +11,17 @@ export default class ProductComp extends LightningElement {
 
     products; 
     @api cartitemarr;
+
+    
+    @track sortBy; 
+    @track sortDirection;
     
     columns = [
         // {label: 'Id', fieldName: 'Id'},
-        {label: 'Name', fieldName: 'Name'},
+        {label: 'Name', fieldName: 'Name',sortable: true},
         {label: 'Product Code', fieldName: 'Product__c'},
-        {label: 'Price', fieldName: 'SellingPrice__c', type: 'currency'},
-        {label: 'Units Available', fieldName: 'Available_Units__c'},
+        {label: 'Price', fieldName: 'SellingPrice__c', type: 'currency',sortable: true},
+        {label: 'Units Available', fieldName: 'Available_Units__c',sortable: true},
         // {
         //     type:'button',
         //     typeAttributes: {
@@ -46,6 +50,19 @@ export default class ProductComp extends LightningElement {
     connectedCallback() {
         this.loadProducts();
         // this.addEventListener('productupdate', this.handleProductUpdate.bind(this));
+    }
+
+     handleSort(event){
+        const {fieldName: sortedBy, sortDirection} = event.detail;
+        const cloneData = [...this.products];
+        cloneData.sort((a,b)=>{
+            let valA = a[sortedBy] || ''; 
+            let valB = b[sortedBy] || ''; 
+            return sortDirection === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        })
+        this.products = cloneData; 
+        this.sortBy = sortedBy; 
+        this.sortDirection = sortDirection;
     }
 
     async loadProducts() {
