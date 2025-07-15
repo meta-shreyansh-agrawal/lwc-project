@@ -1,0 +1,24 @@
+public class ProductSelector extends fflib_SObjectSelector {
+    public List<Schema.SObjectField> getSObjectFieldList() {
+        return new List<Schema.SObjectField> {
+            Product2.Id,
+            Product2.Name,
+            Product2.Product__c, 
+            Product2.Available_Units__c, 
+            Product2.SellingPrice__c};
+    }
+    public Schema.SObjectType getSObjectType() {
+        return Product2.sObjectType;
+    }
+    public List<Product2> selectById(Set<ID> idSet) {
+        return (List<Product2>) selectSObjectsById(idSet);
+    }
+
+    public List<Product2> searchProduct(String searchTerm){
+        return (List<Product2>)Database.query(
+            newQueryFactory()
+            .setCondition('Name LIKE :searchTerm')
+            .toSOQL()
+        );
+    }
+}
