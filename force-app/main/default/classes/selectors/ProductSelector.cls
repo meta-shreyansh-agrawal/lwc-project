@@ -21,4 +21,14 @@ public class ProductSelector extends fflib_SObjectSelector {
             .toSOQL()
         );
     }
+
+    public List<Product2> getPaginatedProducts(Integer pageNumber, Integer pageSize){
+        return (List<Product2>) Database.query(
+            newQueryFactory()
+            .addOrdering(Product2.Name, fflib_QueryFactory.SortOrder.ASCENDING)
+            .setLimit(pageSize)
+            .setOffSet(((pageNumber - 1) * pageSize))
+            .toSOQL()
+        ); 
+    }
 }

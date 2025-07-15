@@ -5,8 +5,7 @@ public with sharing class productList {
 
         Map<String, Object> response = new Map<String, Object>();
 
-        List<Product2> products =  [SELECT  Id,Name, Product__c, SellingPrice__c,	Available_Units__c FROM Product2 
-        ORDER BY Name LIMIT :pageSize OFFSET :((pageNumber - 1) * pageSize)];    
+        List<Product2> products =  new ProductSelector().getPaginatedProducts(pageNumber, pageSize);    
         
         
          // Get total record count (for pagination)

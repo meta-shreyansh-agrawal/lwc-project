@@ -2,8 +2,7 @@ public with sharing class orderController {
    @AuraEnabled(cacheable=true)
     public static Map<String, Object> getPrevoiusOrders(Integer pageNumber, Integer pageSize) {
         Map<String, Object> response = new Map<String, Object>();
-        List<PurchaseOrder__c> orders = [SELECT Id, Name, OrderDate__c,  Status__c, TotalAmount__c FROM PurchaseOrder__c Order BY CreatedDate DESC
-        LIMIT :pageSize OFFSET :((pageNumber - 1) * pageSize)];
+        List<PurchaseOrder__c> orders = new PurchaseOrderSelector().getPaginatedOrders(pageNumber, pageSize);
 
         Integer totalRecords = [SELECT COUNT() FROM PurchaseOrder__c];
 
@@ -18,14 +17,19 @@ public with sharing class orderController {
 
     @AuraEnabled
     public static void placeOrder(PurchaseOrder__c order, List<PurchaseOrderLineItem__c> lineItems) {
-        insert order;
+        fflib_SObjectUnitOfWork uow = new fflib_SObjectUnitOfWork(
+            new Schema.SObjectType[] {
+                PurchaseOrder__c.SObjectType,
+                PurchaseOrderLineItem__c.SObjectType,
+                Product2.SObjectType
+            }
+        );
+        uow.registerNew(order); 
+
         for(PurchaseOrderLineItem__c item: lineItems) {
-            item.PurchaseOrder__c = order.Id;
+            uow.registerNew(item,PurchaseOrderLineItem__c.PurchaseOrder__c,order);
         }
 
-        insert lineItems;
-
-        
         // Update product quantities
 
         Set<Id> productIds = new Set<Id>();
@@ -48,7 +52,9 @@ public with sharing class orderController {
                 p.Available_Units__c -= line.Quantity__c;
             }
         }
+        uow.registerDirty(productMap.values()); 
 
-        update productMap.values();
+        uow.commitWork();
+        // update productMap.values();
     } 
 }
