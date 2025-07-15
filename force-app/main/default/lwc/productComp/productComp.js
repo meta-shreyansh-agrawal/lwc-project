@@ -2,7 +2,6 @@ import { LightningElement, wire, api, track } from 'lwc';
 import getPaginatedProducts from '@salesforce/apex/productList.getPaginatedProducts';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import searchProducts from '@salesforce/apex/productSearch.searchProducts';
-import Toast from 'lightning/toast';
 //import addToCart from '@salesforce/apex/cartData.addToCart';
 
  
