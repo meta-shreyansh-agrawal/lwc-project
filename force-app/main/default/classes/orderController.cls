@@ -3,6 +3,18 @@ public with sharing class orderController {
     @TestVisible
     static IPurchaseOrderSelector purchaseOrderSelector = new PurchaseOrderSelector();
 
+    @TestVisible 
+    static IProductSelector productSelector = new ProductSelector();
+
+    @TestVisible
+    static fflib_SObjectUnitOfWork uow = new fflib_SObjectUnitOfWork(
+            new Schema.SObjectType[] {
+                PurchaseOrder__c.SObjectType,
+                PurchaseOrderLineItem__c.SObjectType,
+                Product2.SObjectType
+            }
+    );
+
    @AuraEnabled(cacheable=true)
     public static Map<String, Object> getPrevoiusOrders(Integer pageNumber, Integer pageSize) {
         Map<String, Object> response = new Map<String, Object>();
@@ -21,13 +33,7 @@ public with sharing class orderController {
 
     @AuraEnabled
     public static void placeOrder(PurchaseOrder__c order, List<PurchaseOrderLineItem__c> lineItems) {
-        fflib_SObjectUnitOfWork uow = new fflib_SObjectUnitOfWork(
-            new Schema.SObjectType[] {
-                PurchaseOrder__c.SObjectType,
-                PurchaseOrderLineItem__c.SObjectType,
-                Product2.SObjectType
-            }
-        );
+        
         uow.registerNew(order); 
 
         for(PurchaseOrderLineItem__c item: lineItems) {
@@ -43,7 +49,7 @@ public with sharing class orderController {
 
 
         Map<Id,Product2> productMap = new Map<Id,Product2>(
-            [SELECT Id,Available_Units__c FROM Product2 WHERE Id IN: productIds]
+            productSelector.getProductsByIdSet(productIds)
         );
 
         for(PurchaseOrderLineItem__c line: lineItems) {
@@ -59,6 +65,5 @@ public with sharing class orderController {
         uow.registerDirty(productMap.values()); 
 
         uow.commitWork();
-        // update productMap.values();
     } 
 }

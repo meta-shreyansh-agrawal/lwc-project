@@ -5,7 +5,8 @@ public class ProductSelector extends fflib_SObjectSelector implements IProductSe
             Product2.Name,
             Product2.Product__c, 
             Product2.Available_Units__c, 
-            Product2.SellingPrice__c};
+            Product2.SellingPrice__c
+        };
     }
     public Schema.SObjectType getSObjectType() {
         return Product2.sObjectType;
@@ -35,4 +36,8 @@ public class ProductSelector extends fflib_SObjectSelector implements IProductSe
     public Integer getProductCount(){
         return [SELECT COUNT() FROM Product2]; 
     } 
+
+    public List<Product2> getProductsByIdSet(Set<Id> idSet){
+        return selectById(idSet); 
+    }
 }
