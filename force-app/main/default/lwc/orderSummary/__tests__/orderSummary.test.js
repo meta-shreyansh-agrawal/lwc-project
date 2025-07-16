@@ -1,6 +1,8 @@
 import { createElement } from '@lwc/engine-dom';
 import OrderSummary from 'c/orderSummary';
 
+const mockCartItems = require('./data/cartItems.json');
+
 describe('c-order-summary', () => {
     afterEach(() => {
         // The jsdom instance is shared across test cases in a single file so reset the DOM
@@ -22,4 +24,16 @@ describe('c-order-summary', () => {
         // const div = element.shadowRoot.querySelector('div');
         expect(1).toBe(1);
     });
-}); 
+
+    it('should render the component with cart items', () => {
+        const element = createElement('c-order-summary', {
+            is: OrderSummary
+        });
+        element.cartItems = mockCartItems;
+        document.body.appendChild(element);
+
+        const items = element.shadowRoot.querySelectorAll('lightning-datatable');
+        expect(items).toHaveLength(1);
+    });
+
+});
