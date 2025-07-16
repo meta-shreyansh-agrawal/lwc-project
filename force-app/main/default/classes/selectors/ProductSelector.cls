@@ -1,4 +1,4 @@
-public class ProductSelector extends fflib_SObjectSelector {
+public class ProductSelector extends fflib_SObjectSelector implements IProductSelector {
     public List<Schema.SObjectField> getSObjectFieldList() {
         return new List<Schema.SObjectField> {
             Product2.Id,

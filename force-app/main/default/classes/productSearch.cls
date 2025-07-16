@@ -1,9 +1,13 @@
 public with sharing class productSearch {
-     @AuraEnabled(cacheable=true)
+    
+    @TestVisible 
+    static IProductSelector productSelector = new ProductSelector(); 
+    
+    @AuraEnabled(cacheable=true)
     public static List<Product2> searchProducts(String searchKey) {
         // Prevent SOQL injection by escaping special characters
         String searchTerm = '%' + String.escapeSingleQuotes(searchKey) + '%';
 // Perform the SOQL query
-        return new ProductSelector().searchProduct(searchTerm);
+        return productSelector.searchProduct(searchTerm);
     }
 }
