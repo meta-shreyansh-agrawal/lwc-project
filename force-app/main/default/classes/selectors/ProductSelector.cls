@@ -31,4 +31,8 @@ public class ProductSelector extends fflib_SObjectSelector implements IProductSe
             .toSOQL()
         ); 
     }
+
+    public Integer getProductCount(){
+        return [SELECT COUNT() FROM Product2]; 
+    } 
 }

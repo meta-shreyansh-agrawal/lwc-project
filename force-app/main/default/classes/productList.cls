@@ -1,15 +1,17 @@
 public with sharing class productList {
+
+     @TestVisible 
+    static IProductSelector productSelector = new ProductSelector(); 
     
     @AuraEnabled(cacheable=true)
     public static Map<String, Object> getPaginatedProducts(Integer pageNumber, Integer pageSize){ 
 
         Map<String, Object> response = new Map<String, Object>();
 
-        List<Product2> products =  new ProductSelector().getPaginatedProducts(pageNumber, pageSize);    
-        
+        List<Product2> products =  productSelector.getPaginatedProducts(pageNumber, pageSize);    
         
          // Get total record count (for pagination)
-        Integer totalRecords = [SELECT COUNT() FROM Product2];
+        Integer totalRecords = productSelector.getProductCount();
 
         // Calculate total pages
         Integer totalPages = (totalRecords + pageSize - 1) / pageSize;
