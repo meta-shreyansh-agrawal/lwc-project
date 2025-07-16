@@ -1,10 +1,14 @@
 public with sharing class orderController {
+
+    @TestVisible
+    static IPurchaseOrderSelector purchaseOrderSelector = new PurchaseOrderSelector();
+
    @AuraEnabled(cacheable=true)
     public static Map<String, Object> getPrevoiusOrders(Integer pageNumber, Integer pageSize) {
         Map<String, Object> response = new Map<String, Object>();
-        List<PurchaseOrder__c> orders = new PurchaseOrderSelector().getPaginatedOrders(pageNumber, pageSize);
+        List<PurchaseOrder__c> orders = purchaseOrderSelector.getPaginatedOrders(pageNumber, pageSize);
 
-        Integer totalRecords = [SELECT COUNT() FROM PurchaseOrder__c];
+        Integer totalRecords = purchaseOrderSelector.getOrderCount();
 
         Integer totalPages = (totalRecords + pageSize - 1) / pageSize;
 

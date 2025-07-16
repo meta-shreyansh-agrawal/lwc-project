@@ -1,6 +1,6 @@
 public with sharing class productList {
 
-     @TestVisible 
+    @TestVisible 
     static IProductSelector productSelector = new ProductSelector(); 
     
     @AuraEnabled(cacheable=true)

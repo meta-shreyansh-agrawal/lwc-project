@@ -1,4 +1,4 @@
-public with sharing class PurchaseOrderSelector extends fflib_SObjectSelector {
+public with sharing class PurchaseOrderSelector extends fflib_SObjectSelector implements IPurchaseOrderSelector {
     public List<Schema.SObjectField> getSObjectFieldList() {
         return new List<Schema.SObjectField> {
             PurchaseOrder__c.Id,
@@ -23,5 +23,9 @@ public with sharing class PurchaseOrderSelector extends fflib_SObjectSelector {
             .setOffSet(((pageNumber - 1) * pageSize))
             .toSOQL()
         ); 
+    }
+
+    public Integer getOrderCount(){
+        return [SELECT COUNT() FROM PurchaseOrder__c]; 
     }
 }
