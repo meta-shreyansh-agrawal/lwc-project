@@ -22,14 +22,17 @@ private class productListTest {
         // Start Test
         Test.startTest(); 
         productList.productSelector = mockSelector; 
-        Map<String, Object> result = productList.getPaginatedProducts(1,1);
+        Map<String, Object> result = productList.getPaginatedProducts(1,2);
         Integer totalRecords = (Integer)result.get('totalRecords');
         Integer totalPages = (Integer)result.get('totalPages');
+        List<Product2> records = (List<Product2>)result.get('records');
+        
         Test.stopTest(); 
 
         //Assertion
         System.AssertEquals(1, totalRecords);
         System.AssertEquals(1, totalPages); 
+        System.assertEquals(1, records.size());
 
     }
 }

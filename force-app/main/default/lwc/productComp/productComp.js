@@ -135,7 +135,7 @@ export default class ProductComp extends LightningElement {
 
      handleAdd() {
         const selectedRows = this.template.querySelector('lightning-datatable').getSelectedRows();
-           if(selectedRows.length != 1){
+           if(selectedRows.length == 0){
             this.dispatchEvent(new ShowToastEvent({
                 title: 'Please select a row',
                 message: 'Please select a row to add to cart',
@@ -178,7 +178,7 @@ export default class ProductComp extends LightningElement {
                 if(p.Id === product.Id) {
                     const updated = {
                         ...p,
-                        Available_Units__c: p.Available_Units__c - 1
+                        Available_Units__c: parseInt(p.Available_Units__c) - 1
                     }; 
                     console.log('Product updated ' + JSON.stringify(updated));
                    
